@@ -6,8 +6,8 @@ class Grid():
 		self.canvas = Canvas(root, width=screen_width + 1, height=screen_height + 1)
 		self.canvas.pack(side="bottom")
 
-		self.grid_width = 50
-		self.grid_height = 50
+		self.grid_width = 100
+		self.grid_height = 100
 
 		self.grid = []
 		for i in range(self.grid_width):
@@ -30,7 +30,7 @@ class Grid():
 			"blue": "turn_right"
 		}
 		self.stored_color = "white"
-		self.draw()
+		self.draw_grid()
 
 	def update(self):
 		if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
@@ -42,6 +42,7 @@ class Grid():
 			self.ant_direction %= 4
 
 			self.grid[self.ant_pos_x][self.ant_pos_y] = self.stored_color
+			self.draw_current_rect()
 
 			if self.ant_direction == 0:
 				self.ant_pos_x -= 1
@@ -56,9 +57,9 @@ class Grid():
 				
 				self.stored_color = self.color_rotation[(self.color_rotation.index(self.grid[self.ant_pos_x][self.ant_pos_y]) + 1) % len(self.color_rotation)]
 				self.grid[self.ant_pos_x][self.ant_pos_y] = "red"
-		self.draw()
+		self.draw_current_rect()
 
-	def draw(self):
+	def draw_grid(self):
 		for i in range(self.grid_width):
 			for j in range(self.grid_height):
 				polygonPoints = []
@@ -71,4 +72,17 @@ class Grid():
 					x += self.edgeSide_x * cos(radians(angle))
 					y += self.edgeSide_y * sin(radians(angle))
 					angle += 360 / 4
-				self.canvas.create_polygon(polygonPoints, outline="black", fill=self.grid[i][j], width=1)
+				self.canvas.create_polygon(polygonPoints, outline="black", fill=self.grid[i][j], width=1, tags=f"{i}-{j}")
+
+	def draw_current_rect(self):
+		polygonPoints = []
+		x = self.ant_pos_x * self.edgeSide_x + 2
+		y = self.ant_pos_y * self.edgeSide_y + 2
+		angle = 0
+		for _ in range(4):
+			polygonPoints.append(x)
+			polygonPoints.append(y)
+			x += self.edgeSide_x * cos(radians(angle))
+			y += self.edgeSide_y * sin(radians(angle))
+			angle += 360 / 4
+		self.canvas.create_polygon(polygonPoints, outline="black", fill=self.grid[self.ant_pos_x][self.ant_pos_y], width=1, tags=f"{self.ant_pos_x}-{self.ant_pos_y}")

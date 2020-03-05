@@ -20,5 +20,5 @@ grid = Grid(screen_width, screen_height, root)
 while True:
 	grid.canvas.update_idletasks()
 	grid.canvas.update()
-	grid.canvas.delete(ALL)
-	grid.canvas.after(1, grid.update())
+	grid.canvas.delete(f"{grid.ant_pos_x}-{grid.ant_pos_y}")
+	grid.canvas.after(5, grid.update())
