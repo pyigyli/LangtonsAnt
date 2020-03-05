@@ -1,13 +1,15 @@
 from math import cos, sin, radians
-from tkinter import Canvas
+from tkinter import *
 
-class Grid():
-	def __init__(self, screen_width, screen_height, root):
-		self.canvas = Canvas(root, width=screen_width + 1, height=screen_height + 1)
-		self.canvas.pack(side="bottom")
+class Logic():
+	def __init__(self, screen_width, screen_height, canvas):
+		self.canvas = canvas
 
 		self.grid_width = 100
 		self.grid_height = 100
+
+		self.edgeSide_x = screen_width / self.grid_width
+		self.edgeSide_y = screen_height / self.grid_height
 
 		self.grid = []
 		for i in range(self.grid_width):
@@ -21,9 +23,6 @@ class Grid():
 		self.ant_pos_y = self.grid_height // 2
 		self.ant_direction = 0
 
-		self.edgeSide_x = screen_width / self.grid_width
-		self.edgeSide_y = screen_height / self.grid_height
-
 		self.color_rotation = ["white", "blue"]
 		self.color_map = {
 			"white": "turn_left",
@@ -31,6 +30,24 @@ class Grid():
 		}
 		self.stored_color = "white"
 		self.draw_grid()
+	
+	def reset(self):
+		for i in range(self.grid_width):
+			for j in range(self.grid_height):
+				if self.grid[i][j] != "white":
+					self.grid[i][j] = "white"
+					self.ant_pos_x = i
+					self.ant_pos_y = j
+					self.canvas.delete(f"{i}-{j}")
+					self.draw_current_rect()
+		self.ant_pos_x = self.grid_width // 2
+		self.ant_pos_y = self.grid_height // 2
+		self.grid[self.ant_pos_x][self.ant_pos_y] = "red"
+		self.draw_current_rect()
+
+		self.ant_pos_x = self.grid_width // 2
+		self.ant_pos_y = self.grid_height // 2
+		self.ant_direction = 0
 
 	def update(self):
 		if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
