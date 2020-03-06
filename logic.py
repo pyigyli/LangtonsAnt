@@ -31,6 +31,17 @@ class Logic():
 		self.stored_color = "white"
 		self.draw_grid()
 	
+	def set_config(self, colors, color_map):
+		self.color_rotation = []
+		self.color_map.clear()
+		for i in range(len(colors)):
+			if color_map[i].get() == "Turn left":
+				self.color_rotation.append(colors[i])
+				self.color_map[colors[i]] = "turn_left"
+			elif color_map[i].get() == "Turn right":
+				self.color_rotation.append(colors[i])
+				self.color_map[colors[i]] = "turn_right"
+	
 	def reset(self):
 		for i in range(self.grid_width):
 			for j in range(self.grid_height):
@@ -51,7 +62,6 @@ class Logic():
 
 	def update(self):
 		if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
-			
 			if self.color_map[self.stored_color] == "turn_left":
 				self.ant_direction -= 1
 			elif self.color_map[self.stored_color] == "turn_right":
@@ -71,35 +81,20 @@ class Logic():
 				self.ant_pos_y += 1
 				
 			if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
-				
 				self.stored_color = self.color_rotation[(self.color_rotation.index(self.grid[self.ant_pos_x][self.ant_pos_y]) + 1) % len(self.color_rotation)]
 				self.grid[self.ant_pos_x][self.ant_pos_y] = "red"
-		self.draw_current_rect()
+			self.draw_current_rect()
 
 	def draw_grid(self):
 		for i in range(self.grid_width):
 			for j in range(self.grid_height):
-				polygonPoints = []
 				x = i * self.edgeSide_x + 2
 				y = j * self.edgeSide_y + 2
-				angle = 0
-				for _ in range(4):
-					polygonPoints.append(x)
-					polygonPoints.append(y)
-					x += self.edgeSide_x * cos(radians(angle))
-					y += self.edgeSide_y * sin(radians(angle))
-					angle += 360 / 4
-				self.canvas.create_polygon(polygonPoints, outline="black", fill=self.grid[i][j], width=1, tags=f"{i}-{j}")
+				bbox = (x, y, x + self.edgeSide_x, y + self.edgeSide_y)
+				self.canvas.create_rectangle(*bbox, fill=self.grid[i][j], tags=f"{i}-{j}")
 
 	def draw_current_rect(self):
-		polygonPoints = []
 		x = self.ant_pos_x * self.edgeSide_x + 2
 		y = self.ant_pos_y * self.edgeSide_y + 2
-		angle = 0
-		for _ in range(4):
-			polygonPoints.append(x)
-			polygonPoints.append(y)
-			x += self.edgeSide_x * cos(radians(angle))
-			y += self.edgeSide_y * sin(radians(angle))
-			angle += 360 / 4
-		self.canvas.create_polygon(polygonPoints, outline="black", fill=self.grid[self.ant_pos_x][self.ant_pos_y], width=1, tags=f"{self.ant_pos_x}-{self.ant_pos_y}")
+		bbox = (x, y, x + self.edgeSide_x, y + self.edgeSide_y)
+		self.canvas.create_rectangle(*bbox, fill=self.grid[self.ant_pos_x][self.ant_pos_y], tags=f"{self.ant_pos_x}-{self.ant_pos_y}")
