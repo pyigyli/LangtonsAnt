@@ -31,16 +31,19 @@ class Logic():
 		self.stored_color = "white"
 		self.draw_grid()
 	
-	def set_config(self, colors, color_map):
+	def set_config(self, colors, new_color_map):
 		self.color_rotation = []
 		self.color_map.clear()
 		for i in range(len(colors)):
-			if color_map[i].get() == "Turn left":
+			if new_color_map[i].get() == "Turn left":
 				self.color_rotation.append(colors[i])
 				self.color_map[colors[i]] = "turn_left"
-			elif color_map[i].get() == "Turn right":
+			elif new_color_map[i].get() == "Turn right":
 				self.color_rotation.append(colors[i])
 				self.color_map[colors[i]] = "turn_right"
+			elif new_color_map[i].get() == "Go straight":
+				self.color_rotation.append(colors[i])
+				self.color_map[colors[i]] = "no_turn"
 	
 	def reset(self):
 		for i in range(self.grid_width):
@@ -59,6 +62,7 @@ class Logic():
 		self.ant_pos_x = self.grid_width // 2
 		self.ant_pos_y = self.grid_height // 2
 		self.ant_direction = 0
+		self.stored_color = "white"
 
 	def update(self):
 		if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
@@ -83,7 +87,7 @@ class Logic():
 			if self.ant_pos_x >= 0 and self.ant_pos_x < self.grid_width and self.ant_pos_y >= 0 and self.ant_pos_y < self.grid_height:
 				self.stored_color = self.color_rotation[(self.color_rotation.index(self.grid[self.ant_pos_x][self.ant_pos_y]) + 1) % len(self.color_rotation)]
 				self.grid[self.ant_pos_x][self.ant_pos_y] = "red"
-			self.draw_current_rect()
+				self.draw_current_rect()
 
 	def draw_grid(self):
 		for i in range(self.grid_width):
